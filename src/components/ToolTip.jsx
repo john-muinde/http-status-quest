@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export const Tooltip = ({ children, content, delay = 0.3 }) => {
+export const ToolTip = ({ children, content, delay = 0.3 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [timeoutId, setTimeoutId] = useState(null);
 

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Menu, X, Code2, Gamepad2Icon, Book, Github } from "lucide-react";
 import CurrentPlayer from "./ActivePlayers";
 
-const Navbar = () => {
+const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
@@ -115,4 +115,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavBar;
