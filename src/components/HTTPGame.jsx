@@ -41,41 +41,45 @@ const MemoizedStatusCard = memo(StatusCard);
 
 const GameHeader = memo(({ score, combo, lives, onHome, onRestart }) => (
   <motion.div
-    className="flex justify-between items-center bg-white p-4 rounded-xl shadow-md"
+    className="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-md space-y-4 sm:space-y-0"
     layout
   >
-    <div className="flex items-center space-x-4">
-      <button
-        onClick={onHome}
-        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        title="Return to Menu"
-      >
-        <Home className="w-6 h-6 text-gray-600" />
-      </button>
-      <button
-        onClick={onRestart}
-        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        title="Restart Game"
-      >
-        <RotateCcw className="w-6 h-6 text-gray-600" />
-      </button>
+    {/* Top row on mobile, left side on desktop */}
+    <div className="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-start">
+      <div className="flex items-center space-x-2">
+        <button
+          onClick={onHome}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          title="Return to Menu"
+        >
+          <Home className="w-5 h-5 text-gray-600" />
+        </button>
+        <button
+          onClick={onRestart}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          title="Restart Game"
+        >
+          <RotateCcw className="w-5 h-5 text-gray-600" />
+        </button>
+      </div>
       <ActivePlayers />
     </div>
 
-    <div className="flex items-center space-x-6">
-      <div className="flex items-center bg-yellow-50 px-4 py-2 rounded-lg">
-        <Star className="w-5 h-5 text-yellow-500 mr-2" />
-        <span className="text-xl font-semibold">{score}</span>
+    {/* Bottom row on mobile, right side on desktop */}
+    <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
+      <div className="flex items-center bg-yellow-50 px-3 py-1.5 rounded-lg">
+        <Star className="w-4 h-4 text-yellow-500 mr-1.5" />
+        <span className="text-lg font-semibold">{score}</span>
       </div>
-      <div className="flex items-center bg-blue-50 px-4 py-2 rounded-lg">
-        <Sparkles className="w-5 h-5 text-blue-500 mr-2" />
-        <span className="text-xl font-semibold">{combo}x</span>
+      <div className="flex items-center bg-blue-50 px-3 py-1.5 rounded-lg">
+        <Sparkles className="w-4 h-4 text-blue-500 mr-1.5" />
+        <span className="text-lg font-semibold">{combo}x</span>
       </div>
-      <div className="flex items-center bg-red-50 px-4 py-2 rounded-lg">
+      <div className="flex items-center bg-red-50 px-3 py-1.5 rounded-lg">
         {[...Array(3)].map((_, i) => (
           <Heart
             key={i}
-            className={`w-5 h-5 ${
+            className={`w-4 h-4 ${
               i < lives ? "text-red-500" : "text-gray-300"
             }`}
             fill={i < lives ? "currentColor" : "none"}
@@ -271,7 +275,7 @@ const HTTPGame = () => {
     const currentChallenge = challenges[currentLevel];
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <GameHeader
           score={score}
           combo={combo}
@@ -283,67 +287,102 @@ const HTTPGame = () => {
           }}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="space-y-6">
-            <GameTimer
-              key={timerKey} // Add key to force timer reset
-              initialTime={QUESTION_TIME}
-              isPlaying={screen === SCREENS.PLAYING}
-              onTimeUp={handleTimeUp}
-            />
+        {/* Quick Navigation for Mobile */}
+        <div className="lg:hidden flex space-x-2 sticky top-0 z-20 bg-gray-50 p-2">
+          <button
+            onClick={() =>
+              document
+                .getElementById("question-section")
+                .scrollIntoView({ behavior: "smooth" })
+            }
+            className="flex-1 bg-white p-2 rounded-lg shadow-sm text-sm font-medium text-gray-600 hover:bg-gray-50"
+          >
+            Question
+          </button>
+          <button
+            onClick={() =>
+              document
+                .getElementById("choices-section")
+                .scrollIntoView({ behavior: "smooth" })
+            }
+            className="flex-1 bg-white p-2 rounded-lg shadow-sm text-sm font-medium text-gray-600 hover:bg-gray-50"
+          >
+            Choices
+          </button>
+        </div>
 
-            <MemoizedGameLevel level={currentChallenge} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Question Section */}
+          <div id="question-section" className="lg:order-1 space-y-4">
+            <div className="bg-white p-4 rounded-xl shadow-md space-y-4">
+              <GameTimer
+                key={timerKey}
+                initialTime={QUESTION_TIME}
+                isPlaying={screen === SCREENS.PLAYING}
+                onTimeUp={handleTimeUp}
+              />
 
-            {!showHint && !isRevealed && (
-              <button
-                onClick={() => {
-                  setShowHint(true);
-                  setScore((prev) => Math.max(0, prev - 50));
-                }}
-                className="w-full p-3 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors flex items-center justify-center space-x-2"
-              >
-                <HelpCircle className="w-5 h-5" />
-                <span>Need a hint? (-50 points)</span>
-              </button>
-            )}
+              <MemoizedGameLevel level={currentChallenge} />
 
-            {showHint && (
-              <Alert>
-                <AlertTitle>Hint</AlertTitle>
-                <AlertDescription>{currentChallenge.hint}</AlertDescription>
-              </Alert>
-            )}
+              {!showHint && !isRevealed && (
+                <button
+                  onClick={() => {
+                    setShowHint(true);
+                    setScore((prev) => Math.max(0, prev - 50));
+                  }}
+                  className="w-full p-3 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                >
+                  <HelpCircle className="w-5 h-5" />
+                  <span>Need a hint? (-50 points)</span>
+                </button>
+              )}
+
+              {showHint && (
+                <Alert>
+                  <AlertTitle>Hint</AlertTitle>
+                  <AlertDescription>{currentChallenge.hint}</AlertDescription>
+                </Alert>
+              )}
+            </div>
           </div>
 
-          <div className="space-y-6">
-            <StatusCodeSearch onFilter={handleSearch} />
+          {/* Choices Section */}
+          <div id="choices-section" className="lg:order-2 space-y-4">
+            <div className="sticky top-16 lg:top-4 bg-white p-4 rounded-xl shadow-md z-10">
+              <StatusCodeSearch onFilter={handleSearch} />
+            </div>
 
-            {Object.entries(filteredCategories).map(([category, codes]) => (
-              <motion.div key={category} layout className="space-y-3">
-                <h3 className="font-semibold text-gray-700">{category}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {codes.map((status) => (
-                    <MemoizedStatusCard
-                      key={status.code}
-                      code={status.code}
-                      name={status.name}
-                      onClick={() => handleAnswer(status.code)}
-                      isSelected={selectedCode === status.code}
-                      isCorrect={
-                        isRevealed &&
-                        status.code === currentChallenge.expectedCode
-                      }
-                      isRevealed={isRevealed}
-                    />
-                  ))}
-                </div>
-              </motion.div>
-            ))}
+            <div className="bg-white rounded-xl shadow-md divide-y">
+              {Object.entries(filteredCategories).map(([category, codes]) => (
+                <motion.div key={category} layout className="p-3">
+                  <h3 className="font-semibold text-gray-700 mb-2">
+                    {category}
+                  </h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {codes.map((status) => (
+                      <MemoizedStatusCard
+                        key={status.code}
+                        code={status.code}
+                        name={status.name}
+                        onClick={() => handleAnswer(status.code)}
+                        isSelected={selectedCode === status.code}
+                        isCorrect={
+                          isRevealed &&
+                          status.code === currentChallenge.expectedCode
+                        }
+                        isRevealed={isRevealed}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
 
+        {/* Progress Bar */}
         <motion.div
-          className="w-full bg-gray-200 rounded-full h-2 overflow-hidden"
+          className="fixed bottom-0 left-0 w-full h-1 bg-gray-200"
           layout
         >
           <motion.div
