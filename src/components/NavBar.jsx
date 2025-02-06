@@ -49,7 +49,7 @@ const NavBar = () => {
             ))}
             <CurrentPlayer />
             <a
-              href="https://github.com/john-muinde/status-codes"
+              href="https://github.com/john-muinde/http-status-quest"
               target="_blank"
               rel="noopener noreferrer"
               className="px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 flex items-center space-x-2"
@@ -101,7 +101,7 @@ const NavBar = () => {
             </NavLink>
           ))}
           <a
-            href="https://github.com/john-muinde/status-codes.git"
+            href="https://github.com/john-muinde/http-status-quest.git"
             target="_blank"
             rel="noopener noreferrer"
             className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100 flex items-center space-x-2"
